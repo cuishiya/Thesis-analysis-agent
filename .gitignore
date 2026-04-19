@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv
+
+# 环境变量
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+milvus.db
+milvus_rag.db
+
+# 模型文件
+*.bin
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 项目特定
+memory/
+*.json
+!memory/.gitkeep
+reports/
+!reports/.gitkeep
+zotero_storage/   # 个人 PDF 文献，不纳入版本控制
+data/             # Milvus 向量库和 BM25 模型，本地生成
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# 测试覆盖率
+.coverage
+htmlcov/
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
