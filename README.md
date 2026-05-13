@@ -6,7 +6,7 @@
 
 - **智能调研规划**：自动分析问题复杂度，制定多轮检索策略（简单/中等/复杂三级）
 - **混合检索**：BGE-M3 密集向量 + BM25 稀疏向量加权融合，兼顾语义匹配和关键词精确匹配
-- **网络检索补充**：Semantic Scholar API 优先、DuckDuckGo 备选，支持 arXiv 专项搜索
+- **网络检索补充**：DuckDuckGo 通用搜索 + arXiv 论文专项搜索
 - **迭代反思**：信息不足时自动重规划，最多 3 轮迭代，确保调研充分性
 - **自适应报告**：根据问题类型（定义/方法/对比/综述）自动选择不同报告风格
 - **HTML 报告渲染**：学术风格暗色主题，无外部 CSS/JS 依赖
@@ -161,4 +161,4 @@ LLM_MODEL_PATH=/path/to/DeepSeek-R1-Distill-Qwen-7B
 | 向量数据库 | Milvus Lite（本地模式） |
 | 稀疏检索 | BM25 |
 | PDF 解析 | pdfplumber |
-| 网络检索 | Semantic Scholar API + DuckDuckGo |
+| 网络检索 | DuckDuckGo + arXiv API |
