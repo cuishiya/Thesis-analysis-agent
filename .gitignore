@@ -71,8 +71,10 @@ memory/
 !memory/.gitkeep
 reports/
 !reports/.gitkeep
-zotero_storage/   # 个人 PDF 文献，不纳入版本控制
-data/             # Milvus 向量库和 BM25 模型，本地生成
+# 个人 PDF 文献，不纳入版本控制
+zotero_storage/
+# Milvus 向量库和 BM25 模型，本地生成
+data/
 
 # Jupyter Notebook
 .ipynb_checkpoints/

@@ -138,9 +138,9 @@ class ResearchPlanner:
             print(f"规划过程出错: {e}")
             return []
 
-    def reflect(self, user_query: str, context: str) -> List[Dict[str, Any]]:
+    def replan(self, user_query: str, context: str) -> List[Dict[str, Any]]:
         """
-        反思并决定是否需要更多信息
+        重规划：评估已有信息充分性，决定是否生成补充查询计划
 
         Args:
             user_query: 原始用户查询
@@ -202,21 +202,19 @@ class ResearchPlanner:
             plan_data = self._extract_json(response)
 
             if plan_data and isinstance(plan_data, list):
-                # 转换格式
                 adjusted_plan = []
                 for item in plan_data:
                     action_name = item.get('action_name', '')
                     prompts = item.get('prompts', [])
-
-                    for prompt in prompts:
+                    for p in prompts:
                         adjusted_plan.append({
                             'action_name': action_name,
-                            'prompt': prompt
+                            'prompt': p
                         })
                 return adjusted_plan
 
             return []
 
         except Exception as e:
-            print(f"反思过程出错: {e}")
+            print(f"重规划出错: {e}")
             return []

@@ -46,7 +46,7 @@ class ResearchPaperSystem:
 
     def run_research(self, user_query: str, max_iterations: int = 3) -> str:
         """
-        执行科研调研分析（通过 LangGraph 图驱动 ReAct 循环）
+        执行科研调研分析（通过 LangGraph 图驱动 Plan-and-Execute 流程）
 
         Args:
             user_query:     用户的调研查询

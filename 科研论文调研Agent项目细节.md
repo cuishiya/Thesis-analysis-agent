@@ -1,6 +1,6 @@
 ## 科研论文调研分析 Agent 项目细节
 
-本项目是基于 **LangGraph + ReAct** 的本地化科研调研智能体。全程使用本地 LLM（Qwen3-8B）和本地向量模型（BGE-M3），无需任何外部 API 密钥。
+本项目是基于 **LangGraph + Plan-and-Execute** 的本地化科研调研智能体。全程使用本地 LLM（Qwen3-8B）和本地向量模型（BGE-M3），无需任何外部 API 密钥。
 
 ---
 
@@ -11,11 +11,11 @@
 ```
 用户查询
    ↓
-[reason_node]    reasoning.py     → LLM 分析复杂度，生成检索计划（JSON）
+[plan_node]      reasoning.py     → LLM 分析复杂度，一次性生成完整检索计划（JSON）
    ↓ (有计划)
-[execute_node]   graph.py         → 调用 RAG / 网络检索，结果写入状态
+[execute_node]   graph.py         → 按计划批量调用 RAG / 网络检索，结果写入状态
    ↓
-[reflect_node]   reasoning.py     → LLM 判断信息是否充分，决定是否补充
+[replan_node]    reasoning.py     → 评估信息充分性，决定是否生成补充查询计划
    ↓ (充分 or 超限)
 [summarize_node] summarization.py → 生成 Markdown 报告
    ↓
@@ -29,8 +29,8 @@ class ResearchState(TypedDict):
     user_query:      str        # 用户原始问题
     planned_actions: List[dict] # 当前待执行动作
     context_items:   List[str]  # 累积的检索结果（跨轮持久）
-    iteration:       int        # 已完成的反思轮次
-    max_iterations:  int        # 反思上限（默认 3）
+    iteration:       int        # 已完成的执行轮次
+    max_iterations:  int        # 执行上限（默认 3）
     final_report:    str        # Markdown 报告
     html_path:       str        # HTML 文件路径
 ```
@@ -43,7 +43,7 @@ class ResearchState(TypedDict):
 科研论文分析研究助手/
 ├── main.py               # 入口：初始化 + 构建图 + CLI
 ├── graph.py              # LangGraph 状态机（5 节点 + 路由）
-├── reasoning.py          # plan() + reflect()
+├── reasoning.py          # plan() + replan()
 ├── summarization.py      # generate_report()（纯文本生成）
 ├── local_llm.py          # 本地 Qwen3-8B 单例（OpenAI 兼容接口）
 ├── report_renderer.py    # Markdown → HTML 渲染 + ReportRendererSkill
@@ -75,10 +75,10 @@ result = graph.invoke(initial_state)
 
 | 判断点 | 条件 | 去向 |
 |--------|------|------|
-| `reason` 之后 | `planned_actions` 非空 | `execute` |
-| `reason` 之后 | `planned_actions` 为空（如闲聊） | `END` |
-| `reflect` 之后 | 有补充查询 且 未超限 | `execute`（继续） |
-| `reflect` 之后 | 信息充分 或 达到上限 | `summarize` |
+| `plan` 之后 | `planned_actions` 非空 | `execute` |
+| `plan` 之后 | `planned_actions` 为空（如闲聊） | `END` |
+| `replan` 之后 | 有补充查询 且 未超限 | `execute`（继续） |
+| `replan` 之后 | 信息充分 或 达到上限 | `summarize` |
 
 ---
 
@@ -98,7 +98,7 @@ LLM 强制输出 JSON，示例：
 [{"action_name": "RAG检索", "prompts": ["低空交通的定义"]}]
 ```
 
-**`reflect(user_query, context)`**：检查当前上下文是否充分，返回补充查询列表或 `null`。
+**`replan(user_query, context)`**：评估当前上下文充分性，返回补充查询计划或 `null`。
 
 ---
 
